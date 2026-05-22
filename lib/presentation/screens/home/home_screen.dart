@@ -9,7 +9,9 @@ import '../../../state_management/providers/place_provider.dart';
 import '../../widgets/discovery/category_chip.dart';
 import '../../widgets/discovery/discovery_header.dart';
 import '../../widgets/discovery/discovery_search_bar.dart';
+import '../../widgets/discovery/featured_place_card.dart';
 import '../../widgets/discovery/scenic_place_card.dart';
+import '../../widgets/discovery/section_header.dart';
 import '../../widgets/place_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -146,29 +148,99 @@ class _HomeScreenState extends State<HomeScreen> {
 
             // ===== DISCOVERY LIST =====
 
+            // Expanded(
+            //
+            //   child: ListView.builder(
+            //
+            //     itemCount:
+            //     provider.places.length,
+            //
+            //     itemBuilder:
+            //         (context, index) {
+            //
+            //       return ScenicPlaceCard(
+            //
+            //         place:
+            //         provider.places[index],
+            //       );
+            //     },
+            //   ),
+            // ),
+
             Expanded(
 
-              child: ListView.builder(
+              child: ListView(
 
-                itemCount:
-                provider.places.length,
+                children: [
 
-                itemBuilder:
-                    (context, index) {
+                  // ===== TRENDING =====
 
-                  return ScenicPlaceCard(
+                  const SectionHeader(
+                    title: "Trending Now",
+                    subtitle:
+                    "Popular scenic destinations",
+                  ),
 
-                    place:
-                    provider.places[index],
-                  );
-                },
+                  SizedBox(
+
+                    height: 400,
+
+                    child: ListView.builder(
+
+                      scrollDirection:
+                      Axis.horizontal,
+
+                      itemCount:
+                      provider.places.length,
+
+                      itemBuilder:
+                          (context, index) {
+
+                        return FeaturedPlaceCard(
+
+                          place:
+                          provider.places[index],
+                        );
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  // ===== HIDDEN GEMS =====
+
+                  const SectionHeader(
+                    title: "Hidden Gems",
+                    subtitle:
+                    "Quiet places worth exploring",
+                  ),
+
+                  ListView.builder(
+
+                    shrinkWrap: true,
+
+                    physics:
+                    const NeverScrollableScrollPhysics(),
+
+                    itemCount:
+                    provider.places.length,
+
+                    itemBuilder:
+                        (context, index) {
+
+                      return ScenicPlaceCard(
+
+                        place:
+                        provider.places[index],
+                      );
+                    },
+                  ),
+                ],
               ),
-            ),
+            )
           ],
         ),
       ),
     );
-
-
   }
 }

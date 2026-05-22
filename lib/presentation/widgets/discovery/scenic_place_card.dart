@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_text_styles.dart';
@@ -10,7 +11,7 @@ import '../../../state_management/providers/place_provider.dart';
 import 'scenic_image.dart';
 
 class ScenicPlaceCard
-    extends StatelessWidget {
+    extends StatefulWidget {
 
   final PlaceModel place;
 
@@ -20,197 +21,290 @@ class ScenicPlaceCard
   });
 
   @override
+  State<ScenicPlaceCard> createState() =>
+      _ScenicPlaceCardState();
+}
+
+class _ScenicPlaceCardState
+    extends State<ScenicPlaceCard> {
+
+  // Controls press animation
+  bool isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
 
-    return Container(
+    final place = widget.place;
 
-      margin: const EdgeInsets.only(
-        bottom: 20,
-      ),
+    return GestureDetector(
 
-      decoration: BoxDecoration(
+      // ===== PRESS DOWN =====
 
-        borderRadius:
-        BorderRadius.circular(24),
+      onTapDown: (_) {
 
-        boxShadow: [
+        setState(() {
 
-          BoxShadow(
+          isPressed = true;
+        });
+      },
 
-            color:
-            Colors.black.withValues(
-              alpha: 0.08,
-            ),
+      // ===== RELEASE =====
 
-            blurRadius: 20,
+      onTapUp: (_) {
 
-            offset: const Offset(0, 8),
+        setState(() {
+
+          isPressed = false;
+        });
+      },
+
+      // ===== CANCEL =====
+
+      onTapCancel: () {
+
+        setState(() {
+
+          isPressed = false;
+        });
+      },
+
+      child: AnimatedContainer(
+
+        duration:
+        const Duration(
+          milliseconds: 180,
+        ),
+
+        curve: Curves.easeOut,
+
+        // ===== SCALE EFFECT =====
+
+        transform: Matrix4.identity()
+
+          ..scale(
+            isPressed ? 0.98 : 1.0,
           ),
-        ],
-      ),
 
-      child: ClipRRect(
+        margin: const EdgeInsets.only(
+          bottom: 20,
+        ),
 
-        borderRadius:
-        BorderRadius.circular(24),
+        decoration: BoxDecoration(
 
-        child: Stack(
+          borderRadius:
+          BorderRadius.circular(24),
 
-          children: [
+          // ===== ANIMATED SHADOW =====
 
-            // ===== IMAGE =====
+          boxShadow: [
 
-            SizedBox(
+            BoxShadow(
 
-              height: 280,
+              color:
+              Colors.black.withValues(
 
-              width: double.infinity,
-
-              child: ScenicImage(
-                photoReference:
-                place.photoReference,
+                alpha:
+                isPressed
+                    ? 0.04
+                    : 0.10,
               ),
-            ),
 
-            // ===== GRADIENT =====
+              blurRadius:
+              isPressed ? 10 : 24,
 
-            Positioned.fill(
+              offset:
 
-              child: Container(
+              isPressed
 
-                decoration: BoxDecoration(
+                  ? const Offset(0, 4)
 
-                  gradient: LinearGradient(
-
-                    begin: Alignment.topCenter,
-
-                    end: Alignment.bottomCenter,
-
-                    colors: [
-
-                      Colors.transparent,
-
-                      Colors.black
-                          .withValues(
-                        alpha: 0.75,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // ===== CONTENT =====
-
-            Positioned(
-
-              left: 20,
-
-              right: 20,
-
-              bottom: 20,
-
-              child: Column(
-
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
-
-                children: [
-
-                  // ===== PLACE NAME =====
-
-                  Text(
-
-                    place.name,
-
-                    style:
-                    AppTextStyles.heading2
-                        .copyWith(
-
-                      color: Colors.white,
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // ===== INFO ROW =====
-
-                  Row(
-
-                    children: [
-
-                      const Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                        size: 18,
-                      ),
-
-                      const SizedBox(width: 4),
-
-                      Text(
-
-                        "${place.rating}",
-
-                        style:
-                        const TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      Text(
-
-                        "(${place.reviewCount} reviews)",
-
-                        style:
-                        const TextStyle(
-                          color:
-                          Colors.white70,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            // ===== SAVE BUTTON =====
-
-            Positioned(
-
-              top: 16,
-
-              right: 16,
-
-              child: CircleAvatar(
-
-                backgroundColor:
-                Colors.white,
-
-                child: IconButton(
-
-                  icon: Icon(
-
-                    place.isSaved
-
-                        ? Icons.bookmark
-
-                        : Icons.bookmark_border,
-                  ),
-
-                  onPressed: () {
-
-                    context
-                        .read<
-                        PlaceProvider>()
-                        .toggleSaved(
-                        place);
-                  },
-                ),
-              ),
+                  : const Offset(0, 10),
             ),
           ],
+        ),
+
+        child: ClipRRect(
+
+          borderRadius:
+          BorderRadius.circular(24),
+
+          child: Stack(
+
+            children: [
+
+              // ===== IMAGE =====
+
+              SizedBox(
+
+                height: 280,
+
+                width: double.infinity,
+
+                child: ScenicImage(
+
+                  photoReference:
+                  place.photoReference,
+                ),
+              ),
+
+              // ===== GRADIENT =====
+
+              Positioned.fill(
+
+                child: Container(
+
+                  decoration: BoxDecoration(
+
+                    gradient:
+                    LinearGradient(
+
+                      begin:
+                      Alignment.topCenter,
+
+                      end:
+                      Alignment.bottomCenter,
+
+                      colors: [
+
+                        Colors.transparent,
+
+                        Colors.black
+                            .withValues(
+                          alpha: 0.75,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              // ===== CONTENT =====
+
+              Positioned(
+
+                left: 20,
+
+                right: 20,
+
+                bottom: 20,
+
+                child: Column(
+
+                  crossAxisAlignment:
+                  CrossAxisAlignment.start,
+
+                  children: [
+
+                    // ===== PLACE NAME =====
+
+                    Text(
+
+                      place.name,
+
+                      style:
+                      AppTextStyles
+                          .heading2
+                          .copyWith(
+
+                        color: Colors.white,
+                      ),
+                    ),
+
+                    const SizedBox(
+                      height: 8,
+                    ),
+
+                    // ===== INFO =====
+
+                    Row(
+
+                      children: [
+
+                        const Icon(
+
+                          Icons.star,
+
+                          color:
+                          Colors.amber,
+
+                          size: 18,
+                        ),
+
+                        const SizedBox(
+                          width: 4,
+                        ),
+
+                        Text(
+
+                          "${place.rating}",
+
+                          style:
+                          const TextStyle(
+                            color:
+                            Colors.white,
+                          ),
+                        ),
+
+                        const SizedBox(
+                          width: 12,
+                        ),
+
+                        Text(
+
+                          "(${place.reviewCount} reviews)",
+
+                          style:
+                          const TextStyle(
+                            color:
+                            Colors.white70,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // ===== SAVE BUTTON =====
+
+              Positioned(
+
+                top: 16,
+
+                right: 16,
+
+                child: CircleAvatar(
+
+                  backgroundColor:
+                  Colors.white,
+
+                  child: IconButton(
+
+                    icon: Icon(
+
+                      place.isSaved
+
+                          ? Icons.bookmark
+
+                          : Icons
+                          .bookmark_border,
+                    ),
+
+                    onPressed: () {
+
+                      context
+
+                          .read<
+                          PlaceProvider>()
+
+                          .toggleSaved(
+                          place);
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
