@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/widgets/loaders/app_loader.dart';
+import '../../../core/widgets/states/error_state.dart';
+
 import '../../../state_management/providers/place_provider.dart';
+
 import '../../widgets/place_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -9,104 +13,67 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen> createState() =>
+      _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
-  // Current selected tab index
-  int _currentIndex = 0;
-
-  // Pages for navigation
-  final List<Widget> _screens = const [
-    Center(child: Text("Home")),
-    Center(child: Text("Trips")),
-    Center(child: Text("Lists")),
-    Center(child: Text("Routes")),
-  ];
 
   @override
   void initState() {
 
     super.initState();
 
-    // Fetch places after screen loads
-    Future.microtask(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
 
-      Provider.of<PlaceProvider>(
-        context,
-        listen: false,
-      ).fetchPlaces();
+      if (mounted) {
+
+        context.read<PlaceProvider>().fetchPlaces();
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
 
-    final provider = Provider.of<PlaceProvider>(context);
+    final provider =
+    context.watch<PlaceProvider>();
 
-    return Scaffold(
+    // ===== LOADING =====
 
-      appBar: AppBar(
-        title: const Text("Discover Places"),
-      ),
+    if (provider.isLoading) {
 
-      body: provider.isLoading
+      return const AppLoader();
+    }
 
-          ? const Center(child: CircularProgressIndicator())
+    // ===== ERROR =====
 
-          : ListView.builder(
+    if (provider.errorMessage != null) {
 
-        itemCount: provider.places.length,
+      return ErrorState(
 
-        itemBuilder: (context, index) {
+        message: provider.errorMessage!,
 
-          return PlaceCard(
-            place: provider.places[index],
-          );
+        onRetry: () {
+
+          provider.fetchPlaces();
         },
-      ),
+      );
+    }
 
-      // Bottom navigation bar
-      bottomNavigationBar: BottomNavigationBar(
+    // ===== SUCCESS =====
 
-        currentIndex: _currentIndex,
+    return ListView.builder(
 
-        // Called when user taps tab
-        onTap: (index) {
+      itemCount: provider.places.length,
 
-          setState(() {
+      itemBuilder: (context, index) {
 
-            // Update selected tab
-            _currentIndex = index;
-          });
-        },
+        return PlaceCard(
 
-        type: BottomNavigationBarType.fixed,
-
-        items: const [
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
-          ),
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: "Trips",
-          ),
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: "Lists",
-          ),
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.route),
-            label: "Routes",
-          ),
-        ],
-      ),
+          place: provider.places[index],
+        );
+      },
     );
   }
 }

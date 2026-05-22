@@ -7,6 +7,7 @@ class PlaceModel {
   final double lat;
   final double lng;
   final String photoReference;
+  final bool isSaved;
 
   // Constructor
   PlaceModel({
@@ -17,6 +18,7 @@ class PlaceModel {
     required this.lat,
     required this.lng,
     required this.photoReference,
+    required this.isSaved,
   });
 
   // Factory constructor converts JSON -> Dart object
@@ -39,6 +41,61 @@ class PlaceModel {
       photoReference: json['photos'] != null
           ? json['photos'][0]['photo_reference']
           : '',
+
+      isSaved: false,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+
+    return {
+
+      'place_id': placeId,
+
+      'name': name,
+
+      'rating': rating,
+
+      'review_count': reviewCount,
+
+      'lat': lat,
+
+      'lng': lng,
+
+      'photo_reference': photoReference,
+
+      'category': '',
+
+      'district': '',
+
+      'province': '',
+
+      'is_saved': isSaved ? 1 : 0,
+    };
+  }
+
+  factory PlaceModel.fromMap(
+      Map<String, dynamic> map,
+      ) {
+
+    return PlaceModel(
+
+      placeId: map['place_id'],
+
+      name: map['name'],
+
+      rating: map['rating'],
+
+      reviewCount: map['review_count'],
+
+      lat: map['lat'],
+
+      lng: map['lng'],
+
+      photoReference:
+      map['photo_reference'],
+
+      isSaved: map['is_saved'] == 1,
     );
   }
 }

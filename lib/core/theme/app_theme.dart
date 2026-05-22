@@ -1,40 +1,67 @@
 import 'package:flutter/material.dart';
 
+import 'app_colors.dart';
+import 'app_dimensions.dart';
+import 'app_text_styles.dart';
+
 class AppTheme {
-  // Static method to return theme
+
   static ThemeData lightTheme() {
+
     return ThemeData(
-      primaryColor: Color(0xFF1FAF9A),
 
-      scaffoldBackgroundColor: Color(0xFFFAFAFA),
+      useMaterial3: true,
 
-      // Text theme
-      textTheme: TextTheme(
-        headlineMedium: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
-        bodyMedium: TextStyle(
-          fontSize: 14,
-          color: Colors.grey[800],
-        ),
+      scaffoldBackgroundColor: AppColors.background,
+
+      primaryColor: AppColors.primary,
+
+      // ===== APP BAR =====
+
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        centerTitle: false,
       ),
 
-      // Card styling
+      // ===== TEXT =====
+
+      textTheme: const TextTheme(
+        headlineLarge: AppTextStyles.heading1,
+        headlineMedium: AppTextStyles.heading2,
+        bodyMedium: AppTextStyles.body,
+      ),
+
+      // ===== CARD =====
+
       cardTheme: CardThemeData(
-        elevation: 3,
+
+        color: AppColors.cardBackground,
+
+        elevation: AppDimensions.cardElevation,
+
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(
+            AppDimensions.cardRadius,
+          ),
         ),
       ),
 
-      // Button styling
+      // ===== BUTTON =====
+
       elevatedButtonTheme: ElevatedButtonThemeData(
+
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF1FAF9A),
+
+          backgroundColor: AppColors.primary,
+
+          foregroundColor: Colors.white,
+
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+
+            borderRadius: BorderRadius.circular(
+              AppDimensions.buttonRadius,
+            ),
           ),
         ),
       ),

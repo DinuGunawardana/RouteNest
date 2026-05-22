@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
-import 'core/theme/app_theme.dart';
-import 'presentation/screens/home/home_screen.dart';
+import 'app.dart';
 import 'state_management/providers/place_provider.dart';
 
-void main() {
+Future<void> main() async {
+
+  // Ensure Flutter initialized
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables
+  await dotenv.load(fileName: ".env");
 
   runApp(
 
+    // MultiProvider wraps ENTIRE app
     MultiProvider(
 
       providers: [
 
+        // Register PlaceProvider globally
         ChangeNotifierProvider(
           create: (_) => PlaceProvider(),
         ),
@@ -21,24 +29,6 @@ void main() {
       child: const MyApp(),
     ),
   );
-}
-
-class MyApp extends StatelessWidget {
-
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-
-    return MaterialApp(
-
-      debugShowCheckedModeBanner: false,
-
-      theme: AppTheme.lightTheme(),
-
-      home: const HomeScreen(),
-    );
-  }
 }
 
 
